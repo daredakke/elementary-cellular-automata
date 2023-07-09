@@ -18,24 +18,25 @@ function clamp(value, min, max) {
 }
 
 
-function buildInitialGeneration(length, ratio, randomise=false) {
+function buildInitialGeneration(length, oddsToLiveRatio, randomise=false) {
   let generation = [];
+  let halfway = Math.floor(length * 0.5);
   let status;
+  let oddsToLive = clamp(Number(oddsToLiveRatio), 0, 100);
+
+  if (Number.isNaN(oddsToLive)) {
+    oddsToLive = 0;
+  }
 
   while (generation.length < length) {
     status = 0;
 
     if (randomise) {
-      let oddsToLive = clamp(Number(ratio), 0, 100);
-
-      if (!Number.isNaN(oddsToLive)) {
-        if (Math.floor(Math.random() * 100) < oddsToLive) {
-          status = 1;
-        }
-
-        if (oddsToLive === 0 && generation.length === Math.floor(length * 0.5)) {
-          status = 1;
-        }
+      if (
+        Math.floor(Math.random() * 100) < oddsToLive || 
+        oddsToLive === 0 && generation.length === halfway
+      ) {
+        status = 1;
       }
     }
     generation.push(status);
