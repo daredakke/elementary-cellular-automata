@@ -54,7 +54,7 @@ function buildRuleSet(binary) {
 }
 
 
-function drawCellGrid(allGenerations, cellSize theme) {
+function drawCellGrid(allGenerations, cellSize, theme) {
   let y = 0;
   let cellX = 0;
   let cellY = 0;
