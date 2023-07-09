@@ -108,7 +108,7 @@ function simulate(iterations, initialGeneration) {
 }
 
 
-const colours = [
+const themes = [
   {
     "fg": "black",
     "bg": "white",
@@ -149,7 +149,7 @@ const btnReset = document.querySelector("#reset");
 const inputRule = document.querySelector("#rule");
 const inputCellSize = document.querySelector("#cellSize");
 const inputRatio = document.querySelector("#ratio");
-const selectColours = document.querySelector("#colours");
+const selectThemes = document.querySelector("#themes");
 const context = canvas.getContext("2d");
 const patterns = ["111", "110", "101", "100", "011", "010", "001", "000"];
 let cellSize = 2;
@@ -160,9 +160,10 @@ let binary = "";
 let rules = {};
 let initialGeneration = buildInitialGeneration(columns, inputRatio.value)
 let allGenerations = [initialGeneration];
-let selectedTheme = Number(selectColours.value);
+let selectedTheme = Number(selectThemes.value);
 
-drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
+
+drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
 
 
 btnStart.addEventListener("click", function() {
@@ -176,7 +177,7 @@ btnStart.addEventListener("click", function() {
   binary = intToBin(rule);
   rules = buildRuleSet(binary);
   allGenerations = simulate(rows, initialGeneration);
-  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
 });
 
 
@@ -184,7 +185,7 @@ btnRandomise.addEventListener("click", function() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   initialGeneration = buildInitialGeneration(columns, inputRatio.value, true);
   allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
 });
 
 
@@ -211,11 +212,11 @@ inputCellSize.addEventListener("change", function() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   initialGeneration = buildInitialGeneration(columns, inputRatio.value);
   allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
 });
 
 
-selectColours.addEventListener("change", function() {
-  selectedTheme = Number(selectColours.value);
-  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
+selectThemes.addEventListener("change", function() {
+  selectedTheme = Number(selectThemes.value);
+  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
 });
