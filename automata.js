@@ -54,7 +54,7 @@ function buildRuleSet(binary) {
 }
 
 
-function drawCellGrid(allGenerations, theme) {
+function drawCellGrid(allGenerations, cellSize theme) {
   let y = 0;
   let cellX = 0;
   let cellY = 0;
@@ -161,7 +161,7 @@ let initialGeneration = buildInitialGeneration(columns, inputRatio.value)
 let allGenerations = [initialGeneration];
 let selectedTheme = Number(selectColours.value);
 
-drawCellGrid(allGenerations, colours[selectedTheme]);
+drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
 
 
 btnStart.addEventListener("click", function() {
@@ -175,7 +175,7 @@ btnStart.addEventListener("click", function() {
   binary = intToBin(rule);
   rules = buildRuleSet(binary);
   allGenerations = simulate(rows, initialGeneration);
-  drawCellGrid(allGenerations, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
 });
 
 
@@ -183,7 +183,7 @@ btnRandomise.addEventListener("click", function() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   initialGeneration = buildInitialGeneration(columns, inputRatio.value, true);
   allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
 });
 
 
@@ -210,11 +210,11 @@ inputCellSize.addEventListener("change", function() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   initialGeneration = buildInitialGeneration(columns, inputRatio.value);
   allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
 });
 
 
 selectColours.addEventListener("change", function() {
   selectedTheme = Number(selectColours.value);
-  drawCellGrid(allGenerations, colours[selectedTheme]);
+  drawCellGrid(allGenerations, cellSize, colours[selectedTheme]);
 });
