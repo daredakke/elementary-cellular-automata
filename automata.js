@@ -38,10 +38,10 @@ function buildInitialGeneration(length, oddsToLiveRatio, randomise=false) {
 
 
 function buildRuleSet(binary) {
-  let rules = {};
+  let rules = [];
 
   for (let i = 0; i < binary.length; i++) {
-    rules[patterns[i]] = Number(binary[i]);
+    rules.unshift(Number(binary[i]));
   }
   return rules;
 }
@@ -70,16 +70,18 @@ function drawCellGrid(allGenerations, theme) {
 
 function getNextGeneration(generation) {
   let nextGeneration = [];
-  let left, right, pattern;
+  let left, right, rule;
 
   for (let index = 0; index < generation.length; index++) {
     // Wrap neighbouring indexes if they go out of bounds
     left = index - 1 < 0 ? generation.length - 1 : index - 1;
     right = index + 1 >= generation.length ? 0 : index + 1;
 
-    pattern = `${generation[left]}${generation[index]}${generation[right]}`;
+    rule = generation[right] ? 1 : 0;
+    rule += generation[index] ? 2 : 0;
+    rule += generation[left] ? 4 : 0;
     
-    nextGeneration.push(rules[pattern]);
+    nextGeneration.push(rules[rule]);
   }
   return nextGeneration;
 }
@@ -96,7 +98,7 @@ function simulate(iterations, initialGeneration) {
   let allGenerations = [initialGeneration]
 
   while (allGenerations.length < iterations) {
-    allGenerations.push(getNextGeneration(allGenerations[allGenerations.length - 1]));
+    allGenerations.push(getNextGeneration(allGenerations.at(-1)));
   }
   return allGenerations;
 }
@@ -154,10 +156,9 @@ const inputRatio = document.querySelector("#ratio");
 const selectThemes = document.querySelector("#themes");
 const context = canvas.getContext("2d");
 const imageData = context.createImageData(canvas.width, canvas.height);
-const patterns = ["111", "110", "101", "100", "011", "010", "001", "000"];
 let rule = 110;
 let binary = "";
-let rules = {};
+let rules = [];
 let initialGeneration = buildInitialGeneration(canvas.width, inputRatio.value)
 let allGenerations = [initialGeneration];
 let selectedTheme = Number(selectThemes.value);
