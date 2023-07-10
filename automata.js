@@ -70,7 +70,7 @@ function drawCellGrid(allGenerations, theme) {
 
 
 function getNextGeneration(generation) {
-  let nextGeneration = [];
+  let nextGeneration = new Int8Array(generation.length);
   let left, right, rule;
 
   for (let index = 0; index < generation.length; index++) {
@@ -82,7 +82,7 @@ function getNextGeneration(generation) {
     rule += generation[index] ? 2 : 0;
     rule += generation[left] ? 4 : 0;
     
-    nextGeneration.push(rules[rule]);
+    nextGeneration[index] = rules[rule];
   }
   return nextGeneration;
 }
