@@ -48,6 +48,7 @@ function buildRuleSet(binary) {
 
 
 function drawCellGrid(allGenerations, theme) {
+  const fg = theme["fg"], bg = theme["bg"]
   let dataX, offset, layer;
 
   for (let y = 0; y < allGenerations.length; y++) {
@@ -55,11 +56,11 @@ function drawCellGrid(allGenerations, theme) {
 
     for (let x = 0; x < allGenerations[y].length; x++) {
       dataX = (x * 4) + offset;
-      layer = allGenerations[y][x] ? "fg" : "bg";
+      layer = allGenerations[y][x] ? fg : bg;
 
-      imageData.data[dataX] = theme[layer][0];
-      imageData.data[dataX + 1] = theme[layer][1];
-      imageData.data[dataX + 2] = theme[layer][2];
+      imageData.data[dataX] = layer[0];
+      imageData.data[dataX + 1] = layer[1];
+      imageData.data[dataX + 2] = layer[2];
       imageData.data[dataX + 3] = 255;
     }
   }
