@@ -145,7 +145,7 @@ const themes = [
   },
 ];
 const canvas = document.querySelector("#canvas");
-const btnStart = document.querySelector("#start");
+const btnGenerate = document.querySelector("#generate");
 const btnRandomise = document.querySelector("#randomise");
 const btnReset = document.querySelector("#reset");
 const inputRule = document.querySelector("#rule");
@@ -166,7 +166,7 @@ let selectedTheme = Number(selectThemes.value);
 drawCellGrid(allGenerations, themes[selectedTheme]);
 
 
-btnStart.addEventListener("click", function() {
+btnGenerate.addEventListener("click", function() {
   rule = clamp(Number(inputRule.value), 0, 255);
 
   if (Number.isNaN(rule)) {
