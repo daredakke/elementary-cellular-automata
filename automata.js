@@ -55,21 +55,28 @@ function buildRuleSet(binary) {
 }
 
 
-function drawCellGrid(allGenerations, cellSize, theme) {
-  let y = 0;
-  let cellX = 0;
-  let cellY = 0;
+function drawCellGrid(allGenerations, theme) {
+  let dataX = 0;
+  let offset, layer;
 
-  for (generation of allGenerations) {
-    for (let x = 0; x < generation.length; x++) {
-      cellX = x * cellSize;
+  for (let y = 0; y < allGenerations.length; y++) {
+    offset = (y * allGenerations.length) * 2;
 
-      context.fillStyle = generation[x] ? theme["fg"] : theme["bg"];
-      context.fillRect(cellX, cellY, cellX + cellSize, cellY + cellSize);
+    for (let x = 0; x < allGenerations[y].length; x++) {
+      dataX = (x * 4) + offset;
+      layer = "bg";
+
+      if (allGenerations[y][x] === 1) {
+        layer = "fg";
+      }
+      imageData.data[dataX] = theme[layer][0];
+      imageData.data[dataX + 1] = theme[layer][1];
+      imageData.data[dataX + 2] = theme[layer][2];
+      imageData.data[dataX + 3] = 255;
     }
-    y++;
-    cellY = y * cellSize;
   }
+  context.imageSmoothingEnabled = false;
+  context.putImageData(imageData, 0, 0);
 }
 
 
@@ -98,6 +105,13 @@ function getNextGeneration(generation) {
 }
 
 
+function clearImage() {
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    imageData.data[i + 3] = 0;
+  }
+}
+
+
 function simulate(iterations, initialGeneration) {
   let allGenerations = [initialGeneration]
 
@@ -109,37 +123,45 @@ function simulate(iterations, initialGeneration) {
 
 
 const themes = [
+  // Black and white
   {
-    "fg": "black",
-    "bg": "white",
+    "fg": [0, 0, 0],
+    "bg": [255, 255, 255],
   },
+  // Grey
   {
-    "fg": "dimgrey",
-    "bg": "lightgrey",
+    "fg": [0, 0, 0],
+    "bg": [255, 255, 255],
   },
+  // Blue
   {
-    "fg": "steelblue",
-    "bg": "skyblue",
+    "fg": [70, 130, 180],
+    "bg": [135, 206, 235],
   },
+  // Pink
   {
-    "fg": "palevioletred",
-    "bg": "pink",
+    "fg": [219, 112, 147],
+    "bg": [255, 192, 203],
   },
+  // Orange
   {
-    "fg": "orange",
-    "bg": "navajowhite",
+    "fg": [245, 155, 0],
+    "bg": [255, 222, 173],
   },
+  // Green
   {
-    "fg": "mediumseagreen",
-    "bg": "palegreen",
+    "fg": [60, 179, 113],
+    "bg": [152, 251, 152],
   },
+  // Crimson
   {
-    "fg": "crimson",
-    "bg": "bisque",
+    "fg": [220, 20, 60],
+    "bg": [255, 228, 196],
   },
+  // Indigo
   {
-    "fg": "midnightblue",
-    "bg": "lightsteelblue",
+    "fg": [25, 25, 112],
+    "bg": [176, 196, 222],
   },
 ];
 const canvas = document.querySelector("#canvas");
@@ -151,23 +173,20 @@ const inputCellSize = document.querySelector("#cellSize");
 const inputRatio = document.querySelector("#ratio");
 const selectThemes = document.querySelector("#themes");
 const context = canvas.getContext("2d");
+const imageData = context.createImageData(canvas.width, canvas.height);
 const patterns = ["111", "110", "101", "100", "011", "010", "001", "000"];
-let cellSize = 2;
-let columns = Math.floor(canvas.width / cellSize);
-let rows = Math.floor(canvas.height / cellSize);
 let rule = 110;
 let binary = "";
 let rules = {};
-let initialGeneration = buildInitialGeneration(columns, inputRatio.value)
+let initialGeneration = buildInitialGeneration(canvas.width, inputRatio.value)
 let allGenerations = [initialGeneration];
 let selectedTheme = Number(selectThemes.value);
 
 
-drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
+drawCellGrid(allGenerations, themes[selectedTheme]);
 
 
 btnStart.addEventListener("click", function() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
   rule = clamp(Number(inputRule.value), 0, 255);
 
   if (Number.isNaN(rule)) {
@@ -176,16 +195,18 @@ btnStart.addEventListener("click", function() {
 
   binary = intToBin(rule);
   rules = buildRuleSet(binary);
-  allGenerations = simulate(rows, initialGeneration);
-  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
+  allGenerations = simulate(canvas.height, initialGeneration);
+  drawCellGrid(allGenerations, themes[selectedTheme]);
 });
 
 
 btnRandomise.addEventListener("click", function() {
+  clearImage();
+
   context.clearRect(0, 0, canvas.width, canvas.height);
-  initialGeneration = buildInitialGeneration(columns, inputRatio.value, true);
+  initialGeneration = buildInitialGeneration(canvas.width, inputRatio.value, true);
   allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
+  drawCellGrid(allGenerations, themes[selectedTheme]);
 });
 
 
@@ -199,24 +220,7 @@ inputRule.addEventListener("change", function() {
 });
 
 
-inputCellSize.addEventListener("change", function() {
-  cellSize = clamp(Number(inputCellSize.value), 1, 10);
-
-  if (Number.isNaN(cellSize)) {
-    cellSize = 2;
-  }
-
-  columns = Math.floor(canvas.width / cellSize);
-  rows = Math.floor(canvas.height / cellSize);
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  initialGeneration = buildInitialGeneration(columns, inputRatio.value);
-  allGenerations = [initialGeneration];
-  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
-});
-
-
 selectThemes.addEventListener("change", function() {
   selectedTheme = Number(selectThemes.value);
-  drawCellGrid(allGenerations, cellSize, themes[selectedTheme]);
+  drawCellGrid(allGenerations, themes[selectedTheme]);
 });

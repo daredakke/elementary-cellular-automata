@@ -13,11 +13,10 @@
 
   <ul>
     <li><b>Start</b> - Generate the pattern according to the given rule.</li>
-    <li><b>Rule (0 - 255)</b> - Which rule to follow.</li>
-    <li><b>Cell size (1 - 10)</b> - The size of each cell in pixels. Resets the canvas.</li>
-    <li><b>Initial cell ratio (0 - 100)</b> - How many alive cells to generate when clicking the randomise button. A value of 0 will generate a single alive cell in the middle.</li>
     <li><b>Randomise</b> - Randomise initial generation of cells.</li>
     <li><b>Reset</b> - Reset to default configuration.</li>
+    <li><b>Rule (0 - 255)</b> - Which rule to follow.</li>
+    <li><b>Initial cell ratio (0 - 100)</b> - How many alive cells to generate when clicking the randomise button. A value of 0 will generate a single alive cell in the middle.</li>
     <li><b>Theme</b> - Choose between high and low contrast themes.</li>
   </ul>
 
@@ -29,8 +28,6 @@
     <button id="reset">Reset</button>
     <label>Rule</label>
     <input type="number" id="rule" value="110" min="0" max="255">
-    <label>Cell size</label>
-    <input type="number" id="cellSize" value="2" min="1" max="10">
     <label>Initial cell ratio</label>
     <input type="number" id="ratio" value="2" min="0" max="100">
     <label>Theme</label>
@@ -46,6 +43,6 @@
     </select>
   </div>
 
-  <canvas id="canvas" width="1600" height="1600"></canvas>
+  <canvas id="canvas" width="1600" height="3200"></canvas>
 </body>
 </html>
