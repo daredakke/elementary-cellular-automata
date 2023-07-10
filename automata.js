@@ -5,16 +5,7 @@ function intToBin(n) {
 
 
 function clamp(value, min, max) {
-  let clampedValue = value;
-
-  if (value < min) {
-    clampedValue = min;
-  }
-
-  if (value > max) {
-    clampedValue = max;
-  }
-  return clampedValue;
+  return value < min ? min : value > max ? max : value;
 }
 
 
@@ -31,13 +22,14 @@ function buildInitialGeneration(length, oddsToLiveRatio, randomise=false) {
   while (generation.length < length) {
     status = 0;
 
-    if (randomise) {
-      if (
+    if (
+      randomise &&
+      (
         Math.floor(Math.random() * 100) < oddsToLive || 
         oddsToLive === 0 && generation.length === halfway
-      ) {
-        status = 1;
-      }
+      )
+    ) {
+      status = 1;
     }
     generation.push(status);
   }
@@ -56,19 +48,15 @@ function buildRuleSet(binary) {
 
 
 function drawCellGrid(allGenerations, theme) {
-  let dataX = 0;
-  let offset, layer;
+  let dataX, offset, layer;
 
   for (let y = 0; y < allGenerations.length; y++) {
     offset = (y * allGenerations.length) * 2;
 
     for (let x = 0; x < allGenerations[y].length; x++) {
       dataX = (x * 4) + offset;
-      layer = "bg";
+      layer = allGenerations[y][x] ? "fg" : "bg";
 
-      if (allGenerations[y][x] === 1) {
-        layer = "fg";
-      }
       imageData.data[dataX] = theme[layer][0];
       imageData.data[dataX + 1] = theme[layer][1];
       imageData.data[dataX + 2] = theme[layer][2];
@@ -82,20 +70,12 @@ function drawCellGrid(allGenerations, theme) {
 
 function getNextGeneration(generation) {
   let nextGeneration = [];
-  let left, right;
-  let pattern = "";
+  let left, right, pattern;
 
   for (let index = 0; index < generation.length; index++) {
-    left = index - 1;
-    right = index + 1;
-
-    if (left < 0) {
-      left = generation.length - 1;
-    }
-
-    if (right >= generation.length) {
-      right = 0;
-    }
+    // Wrap neighbouring indexes if they go out of bounds
+    left = index - 1 < 0 ? generation.length - 1 : index - 1;
+    right = index + 1 >= generation.length ? 0 : index + 1;
 
     pattern = `${generation[left]}${generation[index]}${generation[right]}`;
     
@@ -130,8 +110,8 @@ const themes = [
   },
   // Grey
   {
-    "fg": [0, 0, 0],
-    "bg": [255, 255, 255],
+    "fg": [100, 100, 100],
+    "bg": [200, 200, 200],
   },
   // Blue
   {
